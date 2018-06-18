@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewTime;
     private Button buttonSend;
 
+    private String nodemcuip ="192.168.1.44";
+
 
 
 
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 // Send message and waiting for callback
-                SimpleTcpClient.send("Return\r\n", "192.168.1.41", TCP_PORT, new SimpleTcpClient.SendCallback() {
+                SimpleTcpClient.send("Return\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
                     public void onReturn(String tag) {
                         String[] arr_state = tag.split(",");
                         textViewTime.setText(arr_state[1]+"--"+arr_state[2]);
@@ -105,13 +107,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // we add 100 new entries
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 500; i++) {
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
                             // Send message and waiting for callback
-                            SimpleTcpClient.send("Return\r\n", "192.168.1.41", TCP_PORT, new SimpleTcpClient.SendCallback() {
+                            SimpleTcpClient.send("Return\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
                                 public void onReturn(String tag) {
                                     String[] arr_state = tag.split(",");
                                     textViewTime.setText(timeformat(Integer.parseInt(arr_state[1]))+"--"+arr_state[2]);
