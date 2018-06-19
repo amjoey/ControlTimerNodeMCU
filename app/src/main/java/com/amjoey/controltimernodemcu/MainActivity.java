@@ -193,18 +193,29 @@ public class MainActivity extends ListActivity  {
     }
 
     public void upload(View view){
-
+        int c=0 ;
         commandUpload = "";
 
         cursor = mydb.getAllRecord();
         while (cursor.moveToNext()) {
-
-            String strTimeOn =   cursor.getString(cursor.getColumnIndex("timeON"));
-            String strTimeOff =    cursor.getString(cursor.getColumnIndex("timeOFF"));
-            commandUpload += strTimeOn+";"+strTimeOff+";";
+            if(c<4) {
+                String strTimeOn = cursor.getString(cursor.getColumnIndex("timeON"));
+                String strTimeOff = cursor.getString(cursor.getColumnIndex("timeOFF"));
+                commandUpload += strTimeOn + ";" + strTimeOff + ";";
+                c++;
+            }
         }
         cursor.close();
-        SimpleTcpClient.send(commandUpload, nodemcuip, TCP_PORT);
+        //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
+        SimpleTcpClient.send(commandUpload+"\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
+            public void onReturn(String tag) {
+                Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
+
+                }
+            public void onFailed(String tag) {
+                Toast.makeText(getApplicationContext(), "onFailed", Toast.LENGTH_SHORT).show();
+            }
+        }, "TAG");
         Toast.makeText(getApplicationContext(), commandUpload, Toast.LENGTH_SHORT).show();
 
     }
