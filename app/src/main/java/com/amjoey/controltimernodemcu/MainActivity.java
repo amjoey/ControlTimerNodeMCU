@@ -5,14 +5,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.content.Intent;
 import android.content.Context;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ListView;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.view.ViewGroup;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import simpletcp.*;
+
 public class MainActivity extends ListActivity  {
 
     public static final int TCP_PORT = 21111;
@@ -22,8 +26,13 @@ public class MainActivity extends ListActivity  {
     private SimpleCursorAdapter adapter;
 
     private String nodemcuip ="192.168.1.44";
+    private String commandUpload;
 
     DatabaseHandler mydb ;
+
+    private ToggleButton tButton;
+    private Button refreshButton;
+    private TextView textTimeView;
 
 
     private void updateData()
@@ -40,6 +49,7 @@ public class MainActivity extends ListActivity  {
                 0);
         setListAdapter(adapter);
 
+
     }
 
     @Override
@@ -52,10 +62,15 @@ public class MainActivity extends ListActivity  {
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        refreshButton = (Button) findViewById(R.id.refreshButton);
+        tButton = (ToggleButton) findViewById(R.id.toggleButton2);
+        textTimeView = (TextView) findViewById(R.id.textTimeView);
 
         mydb = new DatabaseHandler(this);
         cursor = mydb.getAllRecord();
@@ -66,9 +81,40 @@ public class MainActivity extends ListActivity  {
                 new String[] {"_id", "timeON", "timeOFF"},
                 new int[] {R.id.id, R.id.timeON, R.id.timeOFF},
                 0);
-       setListAdapter(adapter);
+        setListAdapter(adapter);
+
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //String ip = editTextIP.getText().toString();
+                //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
+                SimpleTcpClient.send("Return\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
+                    public void onReturn(String tag) {
+                        //Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
+                        String[] arr_state = tag.split(",");
+
+                        textTimeView.setText(timeformat(Integer.parseInt(arr_state[1])));
+
+                        if(arr_state[2].equals("1")){
+                            tButton.setChecked(true);
+
+                        }else if(arr_state[2].equals("0")){
+                            tButton.setChecked(false);
+
+                        }
+                    }
+                    public void onFailed(String tag) {
+                        Toast.makeText(getApplicationContext(), "onFailed", Toast.LENGTH_SHORT).show();
+                    }
+                }, "TAG");
+            }
+        });
+
+
+
     }
-private class MyCursorAdapter extends SimpleCursorAdapter{
+
+    private class MyCursorAdapter extends SimpleCursorAdapter{
 
         private Cursor c;
         private Context context;
@@ -108,7 +154,7 @@ private class MyCursorAdapter extends SimpleCursorAdapter{
         }
 
     }
-   public void onListItemClick(ListView parent, View view, int position, long id) {
+    public void onListItemClick(ListView parent, View view, int position, long id) {
 
         Intent intent = new Intent(this, EditSetTime.class);
         Cursor cursor = (Cursor) adapter.getItem(position);
@@ -145,6 +191,24 @@ private class MyCursorAdapter extends SimpleCursorAdapter{
         else
             return "0"+ String.valueOf(c);
     }
+
+    public void upload(View view){
+
+        commandUpload = "";
+
+        cursor = mydb.getAllRecord();
+        while (cursor.moveToNext()) {
+
+            String strTimeOn =   cursor.getString(cursor.getColumnIndex("timeON"));
+            String strTimeOff =    cursor.getString(cursor.getColumnIndex("timeOFF"));
+            commandUpload += strTimeOn+";"+strTimeOff+";";
+        }
+        cursor.close();
+        SimpleTcpClient.send(commandUpload, nodemcuip, TCP_PORT);
+        Toast.makeText(getApplicationContext(), commandUpload, Toast.LENGTH_SHORT).show();
+
+    }
+
 
 
 }
