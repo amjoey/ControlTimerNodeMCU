@@ -68,6 +68,8 @@ public class MainActivity extends ListActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        refresh();
+
         refreshButton = (Button) findViewById(R.id.refreshButton);
         tButton = (ToggleButton) findViewById(R.id.toggleButton2);
         textTimeView = (TextView) findViewById(R.id.textTimeView);
@@ -87,26 +89,7 @@ public class MainActivity extends ListActivity  {
         refreshButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //String ip = editTextIP.getText().toString();
-                //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
-                SimpleTcpClient.send("Return\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
-                    public void onReturn(String tag) {
-                        //Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
-                        String[] arr_state = tag.split(",");
-
-                        textTimeView.setText(timeformat(Integer.parseInt(arr_state[1])));
-
-                        if(arr_state[2].equals("1")){
-                            tButton.setChecked(true);
-
-                        }else if(arr_state[2].equals("0")){
-                            tButton.setChecked(false);
-
-                        }
-                    }
-                    public void onFailed(String tag) {
-                        Toast.makeText(getApplicationContext(), "onFailed", Toast.LENGTH_SHORT).show();
-                    }
-                }, "TAG");
+                refresh();
             }
         });
 
@@ -192,13 +175,37 @@ public class MainActivity extends ListActivity  {
             return "0"+ String.valueOf(c);
     }
 
+    public void refresh(){
+
+        //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
+        SimpleTcpClient.send("Return\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
+            public void onReturn(String tag) {
+                //Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
+                String[] arr_state = tag.split(",");
+
+                textTimeView.setText(timeformat(Integer.parseInt(arr_state[1])));
+
+                if(arr_state[2].equals("ON")){
+                    tButton.setChecked(true);
+
+                }else if(arr_state[2].equals("OFF")){
+                    tButton.setChecked(false);
+
+                }
+            }
+            public void onFailed(String tag) {
+                Toast.makeText(getApplicationContext(), "onFailed", Toast.LENGTH_SHORT).show();
+            }
+        }, "TAG");
+
+    }
     public void upload(View view){
         int c=0 ;
         commandUpload = "";
 
         cursor = mydb.getAllRecord();
         while (cursor.moveToNext()) {
-            if(c<4) {
+            if(c<24) {
                 String strTimeOn = cursor.getString(cursor.getColumnIndex("timeON"));
                 String strTimeOff = cursor.getString(cursor.getColumnIndex("timeOFF"));
                 commandUpload += strTimeOn + ";" + strTimeOff + ";";
