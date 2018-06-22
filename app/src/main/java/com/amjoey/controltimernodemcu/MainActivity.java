@@ -148,9 +148,14 @@ public class MainActivity extends ListActivity  {
     public static String timeformat(int t){
         String intTime,first,second;
         if(t>0) {
-            intTime = String.valueOf(Integer.toHexString(t));
-            first = padding(Integer.parseInt(intTime.substring(0, intTime.length() / 2)));
-            second = padding(Integer.parseInt(intTime.substring(intTime.length() / 2)));
+            if(t>89){
+                intTime = String.valueOf(Integer.toHexString(t));
+                first = padding(Integer.parseInt(intTime.substring(0, intTime.length() / 2)));
+                second = padding(Integer.parseInt(intTime.substring(intTime.length() / 2)));
+            }else {
+                first = "00";
+                second = String.valueOf(Integer.toHexString(t));
+            }
         }else{
             first = "00";
             second = "00";
