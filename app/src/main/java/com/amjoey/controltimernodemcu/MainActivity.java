@@ -154,7 +154,11 @@ public class MainActivity extends ListActivity  {
                 second = padding(Integer.parseInt(intTime.substring(intTime.length() / 2)));
             }else {
                 first = "00";
-                second = String.valueOf(Integer.toHexString(t));
+                if(t>9) {
+                    second = String.valueOf(Integer.toHexString(t));
+                }else{
+                    second = "0"+String.valueOf(Integer.toHexString(t));
+                }
             }
         }else{
             first = "00";
