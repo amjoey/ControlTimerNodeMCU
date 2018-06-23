@@ -192,7 +192,7 @@ public class MainActivity extends ListActivity  {
                 //Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
                 String[] arr_state = tag.split(",");
 
-                textTimeView.setText(timeformat(Integer.parseInt(arr_state[1])));
+                textTimeView.setText(timeformat(Integer.parseInt(arr_state[1]))+" "+arr_state[3]+"% "+arr_state[4]+"*C");
 
                 if(arr_state[2].equals("ON")){
                     tButton.setChecked(true);

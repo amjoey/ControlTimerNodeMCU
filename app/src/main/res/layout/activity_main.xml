@@ -51,9 +51,9 @@
 
     <TextView
         android:id="@+id/textTimeView"
-        android:layout_width="62dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="80dp"
+        android:layout_width="134dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="44dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/toggleButton2"
         app:layout_constraintStart_toEndOf="@+id/toggleButton2" />
 
