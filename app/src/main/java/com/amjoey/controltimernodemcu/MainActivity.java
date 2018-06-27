@@ -15,6 +15,8 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.util.Calendar;
+
 import simpletcp.*;
 
 public class MainActivity extends ListActivity  {
@@ -74,6 +76,8 @@ public class MainActivity extends ListActivity  {
         tButton = (ToggleButton) findViewById(R.id.toggleButton2);
         textTimeView = (TextView) findViewById(R.id.textTimeView);
 
+
+
         mydb = new DatabaseHandler(this);
         cursor = mydb.getAllRecord();
         adapter = new MyCursorAdapter(
@@ -84,6 +88,7 @@ public class MainActivity extends ListActivity  {
                 new int[] {R.id.id, R.id.timeON, R.id.timeOFF},
                 0);
         setListAdapter(adapter);
+
 
 
         refreshButton.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +189,30 @@ public class MainActivity extends ListActivity  {
             return "0"+ String.valueOf(c);
     }
 
+    public void setdatetime(View view){
+
+        Calendar rightNow = Calendar.getInstance();
+        String currentYear = Integer.toString(rightNow.get(Calendar.YEAR));
+        String currentMonth = Integer.toString(rightNow.get(Calendar.MONTH)+1);
+        String currentDay = Integer.toString(rightNow.get(Calendar.DAY_OF_MONTH));
+        String currentHour = Integer.toString(rightNow.get(Calendar.HOUR_OF_DAY));
+        String currentMinute = Integer.toString(rightNow.get(Calendar.MINUTE));
+        String currentSecond = Integer.toString(rightNow.get(Calendar.SECOND));
+
+        String commandSetTime = currentYear+";"+currentMonth+";"+currentDay+";"+currentHour+";"+currentMinute+";"+currentSecond+";";
+        //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
+        SimpleTcpClient.send("2;"+commandSetTime+"\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
+            public void onReturn(String tag) {
+                Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
+
+            }
+            public void onFailed(String tag) {
+                Toast.makeText(getApplicationContext(), "onFailed", Toast.LENGTH_SHORT).show();
+            }
+        }, "TAG");
+        Toast.makeText(getApplicationContext(), "RTCAdjust;"+commandSetTime, Toast.LENGTH_SHORT).show();
+    }
+
     public void refresh(){
 
         //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
@@ -192,7 +221,8 @@ public class MainActivity extends ListActivity  {
                 //Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
                 String[] arr_state = tag.split(",");
 
-                textTimeView.setText(timeformat(Integer.parseInt(arr_state[1]))+" "+arr_state[3]+"% "+arr_state[4]+"*C");
+               // textTimeView.setText(timeformat(Integer.parseInt(arr_state[1]))+" "+arr_state[3]+"% "+arr_state[4]+"*C");
+                textTimeView.setText(timeformat(Integer.parseInt(arr_state[1])));
 
                 if(arr_state[2].equals("ON")){
                     tButton.setChecked(true);
@@ -223,7 +253,7 @@ public class MainActivity extends ListActivity  {
         }
         cursor.close();
         //SimpleTcpClient.send("UPDATE\r\n", "192.168.1.42", TCP_PORT);
-        SimpleTcpClient.send(commandUpload+"\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
+        SimpleTcpClient.send("1;"+commandUpload+"\r\n", nodemcuip, TCP_PORT, new SimpleTcpClient.SendCallback() {
             public void onReturn(String tag) {
                 Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
 

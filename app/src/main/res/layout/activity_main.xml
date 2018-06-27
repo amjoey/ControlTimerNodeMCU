@@ -5,7 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <ToggleButton
+        android:id="@+id/toggleButton2"
+        android:layout_width="63dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="ToggleButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textTimeView"
+        android:layout_width="134dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="44dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/toggleButton2"
+        app:layout_constraintStart_toEndOf="@+id/toggleButton2" />
 
     <Button
         android:id="@+id/refreshButton"
@@ -28,15 +44,7 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
 
-    <ToggleButton
-        android:id="@+id/toggleButton2"
-        android:layout_width="63dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="ToggleButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <Button
         android:id="@+id/uploadButton"
@@ -49,12 +57,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@android:id/list" />
 
-    <TextView
-        android:id="@+id/textTimeView"
-        android:layout_width="134dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="44dp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/toggleButton2"
-        app:layout_constraintStart_toEndOf="@+id/toggleButton2" />
+    <Button
+        android:id="@+id/settimeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="setdatetime"
+        android:text="SetTime"
+        app:layout_constraintBaseline_toBaselineOf="@+id/uploadButton"
+        app:layout_constraintStart_toEndOf="@+id/uploadButton" />
+
+
 
 </android.support.constraint.ConstraintLayout>
