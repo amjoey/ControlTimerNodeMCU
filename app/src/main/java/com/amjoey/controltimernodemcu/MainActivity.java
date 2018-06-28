@@ -1,6 +1,8 @@
 package com.amjoey.controltimernodemcu;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.os.Handler;
 
 import java.util.Calendar;
 
@@ -33,9 +36,21 @@ public class MainActivity extends ListActivity  {
     DatabaseHandler mydb ;
 
     private ToggleButton tButton;
-    private Button refreshButton;
+    private Button settimeButon;
     private TextView textTimeView;
 
+    private final Handler handler = new Handler();
+
+    private void doTheAutoRefresh() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Write code for your refresh logic
+                refresh();
+                doTheAutoRefresh();
+            }
+        }, 3000);
+    }
 
     private void updateData()
     {
@@ -58,6 +73,8 @@ public class MainActivity extends ListActivity  {
     protected void onResume() {
         super.onResume();
 
+
+
         if (getListView() != null)
         {
             updateData();
@@ -70,9 +87,12 @@ public class MainActivity extends ListActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        refresh();
+        //refresh();
+        doTheAutoRefresh();
 
-        refreshButton = (Button) findViewById(R.id.refreshButton);
+
+        //refreshButton = (Button) findViewById(R.id.refreshButton);
+        settimeButon = (Button) findViewById(R.id.settimeButton);
         tButton = (ToggleButton) findViewById(R.id.toggleButton2);
         textTimeView = (TextView) findViewById(R.id.textTimeView);
 
@@ -90,13 +110,15 @@ public class MainActivity extends ListActivity  {
         setListAdapter(adapter);
 
 
-
+        /*
         refreshButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //String ip = editTextIP.getText().toString();
                 refresh();
             }
         });
+        */
+
 
 
 
@@ -190,6 +212,29 @@ public class MainActivity extends ListActivity  {
     }
 
     public void setdatetime(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("คุณจะปรับเวลาเป็นเวลาปัจจุบัน ?");
+    //    builder.setIcon(R.drawable.ic_launcher);
+        builder.setPositiveButton("ตกลง", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dosetdatetime();
+                dialog.dismiss();
+                   // stop chronometer here
+
+            }
+        });
+        builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    public  void dosetdatetime(){
 
         Calendar rightNow = Calendar.getInstance();
         String currentYear = Integer.toString(rightNow.get(Calendar.YEAR));
@@ -211,6 +256,7 @@ public class MainActivity extends ListActivity  {
             }
         }, "TAG");
         Toast.makeText(getApplicationContext(), "RTCAdjust;"+commandSetTime, Toast.LENGTH_SHORT).show();
+
     }
 
     public void refresh(){
@@ -239,6 +285,32 @@ public class MainActivity extends ListActivity  {
 
     }
     public void upload(View view){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.app_name);
+        builder.setMessage("คุณจะตั้งตารางเวลาใหม่ ?");
+        //    builder.setIcon(R.drawable.ic_launcher);
+        builder.setPositiveButton("ตกลง", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                doupload();
+                dialog.dismiss();
+                // stop chronometer here
+
+            }
+        });
+        builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+
+
+
+    }
+    public  void doupload(){
         int c=0 ;
         commandUpload = "";
 
@@ -257,15 +329,13 @@ public class MainActivity extends ListActivity  {
             public void onReturn(String tag) {
                 Toast.makeText(getApplicationContext(), tag , Toast.LENGTH_SHORT).show();
 
-                }
+            }
             public void onFailed(String tag) {
                 Toast.makeText(getApplicationContext(), "onFailed", Toast.LENGTH_SHORT).show();
             }
         }, "TAG");
         Toast.makeText(getApplicationContext(), commandUpload, Toast.LENGTH_SHORT).show();
-
     }
-
 
 
 }

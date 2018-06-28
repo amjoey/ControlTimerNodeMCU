@@ -24,12 +24,13 @@
         app:layout_constraintStart_toEndOf="@+id/toggleButton2" />
 
     <Button
-        android:id="@+id/refreshButton"
+        android:id="@+id/settimeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
         android:layout_marginTop="16dp"
-        android:text="Refresh"
+        android:onClick="setdatetime"
+        android:text="SetTime"
         app:layout_constraintBaseline_toBaselineOf="@+id/textTimeView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -57,14 +58,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@android:id/list" />
 
-    <Button
-        android:id="@+id/settimeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="setdatetime"
-        android:text="SetTime"
-        app:layout_constraintBaseline_toBaselineOf="@+id/uploadButton"
-        app:layout_constraintStart_toEndOf="@+id/uploadButton" />
+
 
 
 
